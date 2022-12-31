@@ -5,7 +5,8 @@ import os
 cards = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10,
          10, 11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
 shuffled_cards = cards.copy()
-
+total_chips = int(input("How much would you like to start with today?\n"))
+bet = 0
 # Function that will shuffle cards when the number of cards is less than 10
 
 
@@ -53,6 +54,7 @@ def calculate_score(card_list):
 
 
 def compare(user_score, computer_score):
+
     if computer_score == user_score:
         return "Draw"
         game_over = True
@@ -72,14 +74,24 @@ def compare(user_score, computer_score):
         return "You win!"
         game_over = True
     else:
-        return "You lose"
+        return f"You lose, the dealer had {computer_score}"
         game_over = True
+
+
+# Change bet to reward a win or keep the bet on a loss
+
 
 # Main game function
 
 
 def game():
-
+    global total_chips
+    if total_chips <= 0:
+        print("You are out of money, come back with more!")
+        exit()
+    bet = int(input("How much would you like to bet this hand?\n"))
+    total_chips -= bet
+    print("Taking bets now...")
     user_cards = []
     computer_cards = []
     print("Dealing cards now...")
@@ -97,6 +109,9 @@ def game():
     while not game_over:
 
         user_score = calculate_score(user_cards)
+        if user_score == 21 and len(user_cards) == 2:
+            game_over = True
+            print("Blackjack! You win!")
         computer_score = calculate_score(computer_cards)
 
         if computer_score == 0 or user_score == 21 or user_score > 21:
@@ -128,6 +143,27 @@ def game():
     print(f"Your hand was {user_cards}")
     print(f"The computer's hand was {computer_cards}")
     print(compare(user_score, computer_score))
+    # print(f"Total chips: {total_chips}")
+    # Change bet to reward a win or keep the bet on a loss
+
+    if computer_score == user_score:
+        bet = bet
+    elif computer_score == 0:
+        bet = 0
+    elif user_score == 0:
+        bet *= 2.5
+    elif user_score > 21:
+        bet = 0
+    elif computer_score > 21:
+        bet *= 2
+    elif user_score > computer_score:
+        bet *= 2
+    else:
+        bet = 0
+
+    # print(bet)
+    total_chips += bet
+    print(f"Total chips: {total_chips}")
 
 
 print("Welcome to Blackjack Practice!")
